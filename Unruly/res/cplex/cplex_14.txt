@@ -1,0 +1,9 @@
+taille instance = 2 x 8
+pourcentage de cases initialement remplies = 12.5 %
+solveTime = 0.006076 s
+
+ 1, 1, 0, 0, 1, 0, 1, 0
+ 0, 0, 1, 1, 0, 1, 0, 1
+
+ □ □ ■ ■ □ ■ □ ■
+ ■ ■ □ □ ■ □ ■ □
