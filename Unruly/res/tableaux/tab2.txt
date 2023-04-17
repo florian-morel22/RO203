@@ -1,0 +1,19 @@
+Dans ce fichier, on fixe le taux de remplissage et on fait varier la taille de la grille dans chaque tableau
+
+
+-------------------------------------------------------------------------------
+Taux de remplissage initial : 30.0 %
+
+Taille de la grille   96  Temps d'execution du cplex     Solution trouvée
+            10 x 10                    0.0091577 s                 true
+            14 x 14                      0.01237 s                 true
+            18 x 18                    0.0195558 s                 true
+            22 x 22                    0.0280539 s                 true
+            26 x 26                    0.0360702 s                 true
+            32 x 32                    0.0635391 s                 true
+            36 x 36                    0.0791882 s                 true
+            40 x 40                    0.0915783 s                 true
+            44 x 44                     0.121514 s                 true
+            50 x 50                    0.1545075 s                 true
+
+

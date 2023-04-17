@@ -1,7 +1,6 @@
 using JuMP
 using CPLEX
-
-include("io.jl")
+using Random
 
 function generateInstance(l::Int, c::Int, k::Int)
 
@@ -68,7 +67,7 @@ function generateInstance(l::Int, c::Int, k::Int)
     end
 end
 
-function generateDataSet(n::Int, taille_min::Int, taille_max::Int)
+function generateDataSet_v1(n::Int, taille_min::Int, taille_max::Int)
 
     if n < 1
         println("Le nombre de grilles à générer doit être supérieur ou égal à 1.")
@@ -78,7 +77,7 @@ function generateDataSet(n::Int, taille_min::Int, taille_max::Int)
         println("La taille minimale doit être supérieure ou égale à 2.")
         return -1
     end
-    if taille_min >= taille_max
+    if taille_min > taille_max
         println("La taille maximale doit être supérieure à la taille minimale.")
         return -1
     end
@@ -91,7 +90,7 @@ function generateDataSet(n::Int, taille_min::Int, taille_max::Int)
         while y == -1
             l = convert(Int, rand(taille_min:taille_max))
             c = convert(Int, rand(taille_min:taille_max))
-            color_fixed = convert(Int, rand(1:l*c/2-1))
+            color_fixed = convert(Int, rand(1:l*c-1))
             x = generateInstance(l, c, color_fixed)
             if x != -1
                 y = cplexSolve(x)
@@ -109,6 +108,112 @@ function generateDataSet(n::Int, taille_min::Int, taille_max::Int)
                         text = string(text, " 1,")
                     else
                         text = string(text, "  ,")
+                    end
+                end
+                text = chop(text, head=0, tail=1)
+                if i != l
+                    text = string(text, "\n")
+                end
+            end
+        end
+        file = open("data/instance_$instance.txt", "w")
+        write(file, text)
+        close(file)
+    end
+end
+
+function generateDataSet1(n::Int, size::Int)
+
+    if n < 1
+        println("Le nombre de grilles à générer doit être supérieur ou égal à 1.")
+        return -1
+    end
+
+    for instance in 1:n
+
+        x, y = -1, -1
+        l, c, color_fixed = size, size, -1
+
+        while y == -1
+            color_fixed = convert(Int, rand(1:l*c*0.2))
+            x = generateInstance(l, c, color_fixed)
+            if x != -1
+                y = cplexSolve(x)
+            end
+        end
+
+        #Selection of cases to remove (between 1% and 99% of the total number of cases)
+        nb_cases_to_remove = convert(Int, floor(instance / n * (l * c - 1)))
+        # nb_cases_to_remove = convert(Int, rand(1:l*c-1)) # use for random number of cases to remove
+        ind_alea = randperm(l * c)
+        ind_cases_to_remove = ind_alea[1:nb_cases_to_remove]
+
+
+        text = ""
+
+        if x != -1
+            for i in 1:l
+                for j in 1:c
+                    if i * j in ind_cases_to_remove
+                        text = string(text, "  ,")
+                    elseif y[i, j] == 0
+                        text = string(text, " 0,")
+                    elseif y[i, j] == 1
+                        text = string(text, " 1,")
+                    end
+                end
+                text = chop(text, head=0, tail=1)
+                if i != l
+                    text = string(text, "\n")
+                end
+            end
+        end
+        file = open("data/instance_$instance.txt", "w")
+        write(file, text)
+        close(file)
+    end
+end
+
+function generateDataSet2(n::Int, size_min::Int, size_max::Int, perc_filling::Float64)
+
+    if n < 1
+        println("Le nombre de grilles à générer doit être supérieur ou égal à 1.")
+        return -1
+    end
+
+    for instance in 1:n
+
+        x, y = -1, -1
+        color_fixed = -1
+
+        l = convert(Int, floor((size_min + (instance - 1) * (size_max - size_min) / (n - 1)) / 2) * 2)
+        c = l
+
+        while y == -1
+            color_fixed = convert(Int, rand(1:l*c*0.2))
+            x = generateInstance(l, c, color_fixed)
+            if x != -1
+                y = cplexSolve(x)
+            end
+        end
+
+        #Selection of cases to remove (between 1% and 99% of the total number of cases)
+        nb_cases_to_remove = convert(Int, floor((100 - perc_filling) / 100 * (l * c - 1)))
+        ind_alea = randperm(l * c)
+        ind_cases_to_remove = ind_alea[1:nb_cases_to_remove]
+
+
+        text = ""
+
+        if x != -1
+            for i in 1:l
+                for j in 1:c
+                    if i * j in ind_cases_to_remove
+                        text = string(text, "  ,")
+                    elseif y[i, j] == 0
+                        text = string(text, " 0,")
+                    elseif y[i, j] == 1
+                        text = string(text, " 1,")
                     end
                 end
                 text = chop(text, head=0, tail=1)
@@ -171,14 +276,14 @@ function solveDataSet(path::String)
         file = open("res/cplex/cplex_$i.txt", "w")
         write(file, "taille instance = ", string(l), " x ", string(c), "\n")
         write(file, "pourcentage de cases initialement remplies = ", string(filling), " %\n")
-        write(file, "solveTime = ", string(out.time), " s\n\n")
+        write(file, "solveTime = ", string(out.time), " s\n")
+        if x != -1
+            write(file, "isOptimal = true\n\n")
+        else
+            write(file, "isOptimal = false\n\n")
+        end
         write(file, text)
         close(file)
     end
     return 1
 end
-
-
-#generateDataSet(15, 2, 20)
-solveDataSet("data");
-

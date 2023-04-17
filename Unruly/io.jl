@@ -1,5 +1,6 @@
 using Plots
 include("resolution.jl")
+include("generation.jl")
 
 function readInputFile(path::String)
 
@@ -65,3 +66,93 @@ function displaySolution(x::Matrix{Int})
     end
 
 end
+
+function resultsArray(path_read::String, path_write::String)
+
+    #### PHASE 1 : On fixe la taille de la grille et on varie le taux de remplissage
+
+    # file_w = open(joinpath(path_write, "tab1.txt"), "w")
+    # write(file_w, "Dans ce fichier, on fixe la taille de la grille et on varie le taux de remplissage dans chaque tableau\n\n\n")
+    # close(file_w)
+
+    # sizes = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+    # nb_samples = 10
+
+    # for size in sizes
+
+    #     generateDataSet1(nb_samples, size)
+    #     solveDataSet("data")
+
+    #     file_w = open(joinpath(path_write, "tab1.txt"), "a")
+    #     write(file_w, "-------------------------------------------------------------------------------\n")
+    #     write(file_w, "Taille de la grille : $size x $size\n\n")
+    #     write(file_w, "Taux de remplissage initial     ")
+    #     write(file_w, "Temps d'execution du cplex      ")
+    #     write(file_w, "Solution trouvée                \n")
+
+    #     for k in 1:nb_samples
+
+    #         file_r = open(joinpath(path_read, "cplex_$k.txt"))
+    #         lines = readlines(file_r)[1:4]
+    #         close(file_r)
+
+    #         write(file_w, lpad(lines[2][45:end], 27))
+    #         write(file_w, lpad(lines[3][13:end], 31))
+    #         write(file_w, lpad(lines[4][13:end], 22))
+    #         write(file_w, "\n")
+    #     end
+
+    #     write(file_w, "\n\n")
+    #     close(file_w)
+    # end
+
+
+
+    #### PHASE 2 : On fixe le taux de remplissage et on varie la taille de la grille
+
+    file_w = open(joinpath(path_write, "tab2.txt"), "w")
+    write(file_w, "Dans ce fichier, on fixe le taux de remplissage et on fait varier la taille de la grille dans chaque tableau\n\n\n")
+    close(file_w)
+
+    #fillings = [10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0]
+    fillings = [30.0]
+    nb_samples = 10
+
+    for filling in fillings
+
+        generateDataSet2(nb_samples, 10, 50, filling)
+        solveDataSet("data")
+
+        file_w = open(joinpath(path_write, "tab2.txt"), "a")
+        write(file_w, "-------------------------------------------------------------------------------\n")
+        write(file_w, "Taux de remplissage initial : $filling %\n\n")
+        write(file_w, "Taille de la grille   96  ")
+        write(file_w, "Temps d'execution du cplex     ")
+        write(file_w, "Solution trouvée\n")
+
+        for k in 1:nb_samples
+
+            file_r = open(joinpath(path_read, "cplex_$k.txt"))
+            lines = readlines(file_r)[1:4]
+            close(file_r)
+
+            write(file_w, lpad(lines[1][18:end], 19))
+            write(file_w, lpad(lines[3][13:end], 31))
+            write(file_w, lpad(lines[4][13:end], 21))
+            write(file_w, "\n")
+        end
+
+        write(file_w, "\n\n")
+        close(file_w)
+
+    end
+
+
+end
+
+
+# generateDataSet1(15, 10)
+# #generateDataSet2(15, 10, 100, 10.0)
+# solveDataSet("data");
+
+resultsArray("res/cplex", "res/tableaux")
