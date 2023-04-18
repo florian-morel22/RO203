@@ -22,7 +22,7 @@ function readInputFile(path::String)
 end
 
 
-function displayGrid(A::Array{Int64,3})
+function displaySolution(A::Array{Int64,3})
 
     l = size(A, 1)
     c = size(A, 2)
