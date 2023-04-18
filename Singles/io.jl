@@ -52,7 +52,5 @@ function displaySolution(G::Matrix{Int})
     end
 end
 
-#cplexSolve(readInputFile("./data/instanceTest.txt"))
-
 displayGrid(readInputFile("./data/instanceTest.txt"))
 displaySolution(cplexSolve(readInputFile("./data/instanceTest.txt")))
