@@ -1,3 +1,6 @@
+include("resolution.jl")
+include("generation.jl")
+
 function readInputFile(path::String)
 
     fichier = open(path)
@@ -5,9 +8,9 @@ function readInputFile(path::String)
     close(fichier)
 
     l = size(lines, 1)
-    c = ceil(Int, length(lines[1]) / 3) # On divise par 3 car chaque nombre est séparé par une virgule et un espace
+    c = ceil(Int, length(lines[1]) / 3)
 
-    x = fill(1, l, c) # On initialise la matrice à -1 (cases vides)
+    x = fill(1, l, c)
 
 
     for i in 1:l
@@ -45,3 +48,5 @@ function displaySolution(A::Array{Int64,3})
         println()
     end
 end
+
+solveDataSet("data")

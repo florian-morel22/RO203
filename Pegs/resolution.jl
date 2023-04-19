@@ -1,52 +1,102 @@
 using JuMP
 using CPLEX
 
-include("io.jl")
+
 
 function cplexSolve(G::Matrix{Int})
 
-    l = size(G, 1)
-    c = size(G, 2)
-    n = 32
-
+    l = size(G, 1) + 4
+    c = size(G, 2) + 4
+    n = 26 #32 étapes pour tout enlever, mais ça marche pas
     model = Model(CPLEX.Optimizer)
 
-    @variable(model, x[1:n, 1:l, 1:c, 1:3], Bin)
+    @variable(model, x[1:n, 1:l, 1:c, 1:5], Bin)
 
-    @objective(model, Min, sum(k * x[n, i, j, k] for i in 1:l for j in 1:c for k in 1:3))
+    """
+        x[s, i, k, p, h] in 
 
-    @constraint(model, [s in 1:n, i in 1:l, j in 1:c], sum(x[s, i, j, k] for k in 1:3) == 1)
+            si h=2
+                {0: la case (i,j) est hors jeu pour toutes les étapes}
+            si h=1
+                si p=5
+                    {0: la case (i,j) est un trou à l'étape s, 1: la case (i, j) est un pion pour l'étape s}
+                si p=1
+                    {0: la case (i,j) ne peut pas se déplacer vers la gauche à l'étape s, 1: la case (i, j) peut se déplacer vers la gauche à l'étape s}
+                si p=2
+                    {0: la case (i,j) ne peut pas se déplacer vers la droite à l'étape s, 1: la case (i, j) peut se déplacer vers la droite à l'étape s}
+            
+                ...
+          
 
-    @constraint(model, [s in 1:n, i in 1:l, j in 1:c; G[i, j] == 1], x[s, i, j, 1] == 1)
-    @constraint(model, [s in 1:n, i in 1:l, j in 1:c; G[i, j] > 1], x[s, i, j, 1] == 0)
+        s in [1, n] : étapes du jeu
+        (i,j) in [1,l]x[1,c] : position sur la grille
+        p in {1:left, 2:right, 3:up, 4:down, 5:position} : 1,2,3,4 pour la direction de son mouvement ET 5 pour la position du pion
+        h in {1:case dans le jeu, 2:case hors jeu} : détermine si la case est dans le jeu ou non
+    """
 
-    @constraint(model, [s in 1:(n-1)], sum(x[s, i, j, 3] for i in 1:l, j in 1:c) - sum(x[s+1, i, j, 3] for i in 1:l, j in 1:c) <= 1) #Entre les étapes i et i+1, il y a au plus 1 pion retiré
-    #@constraint(model, [s in 1:(n-1)], sum(x[s, i, j, 2] - x[s+1, i, j, 2] for i in 1:l, j in 1:c) <= 1) #Entre les étapes i et i+1, seules 3 pièces ou 0 peuvent avoir changé de couleur
+    @objective(model, Min, sum(x[n, i, j, 5] for i in 1:l for j in 1:c)) # On minimise le nombre de cases non hors jeu avec un pion à la fin du jeu
+
+    # @objective(model, Min, 1)
+    # @constraint(model, [s in 1:n], l * c - sum(x[s, i, j, 5] for i in 1:l, j in 1:c) == s) # On ne peut pas avoir plusieurs pions sur une même case
 
 
+    #On fixe les cases en rajoutées en bordure de la grille à 1 pour leur position (ils sonts bloquants) et 0 pour leur mouvement (ne peuvent pas bouger)
+    @constraint(model, [s in 1:n, i in 1:2, j in 1:c, p in 1:4], x[s, i, j, p] == 0)
+    @constraint(model, [s in 1:n, i in (l-1):l, j in 1:c, p in 1:4], x[s, i, j, p] == 0)
+    @constraint(model, [s in 1:n, i in 1:l, j in 1:2, p in 1:4], x[s, i, j, p] == 0)
+    @constraint(model, [s in 1:n, i in 1:l, j in (c-1):c, p in 1:4], x[s, i, j, p] == 0)
+
+    @constraint(model, [s in 1:n, i in 1:2, j in 1:c], x[s, i, j, 5] == 1)
+    @constraint(model, [s in 1:n, i in (l-1):l, j in 1:c], x[s, i, j, 5] == 1)
+    @constraint(model, [s in 1:n, i in 1:l, j in 1:2], x[s, i, j, 5] == 1)
+    @constraint(model, [s in 1:n, i in 1:l, j in (c-1):c], x[s, i, j, 5] == 1)
 
 
+    #On fait pareil pour les cases hors jeu dans G directement
+    @constraint(model, [s in 1:n, i in 3:(l-2), j in 3:(c-2), p in 1:4; G[i-2, j-2] == 1], x[s, i, j, p] == 0) # Les cases hors du jeu restent hors du jeu 
+    @constraint(model, [s in 1:n, i in 3:(l-2), j in 3:(c-2); G[i-2, j-2] == 1], x[s, i, j, 5] == 1) # Les cases hors du jeu restent hors du jeu 
 
 
-    @constraint(model, [i in 1:l, j in 1:c], x[1, i, j, G[i, j]] == 1) # La première étape doit être la même que la grille de départ
+    @constraint(model, [s in 1:n, i in 3:(l-2), j in 3:(c-2); G[i-2, j-2] == 2], x[1, i, j, 5] == 0) # Les trous de G sont reportés sur la grille de l'étape 1
+    @constraint(model, [s in 1:n, i in 3:(l-2), j in 3:(c-2); G[i-2, j-2] == 3], x[1, i, j, 5] == 1) # Les pions de G sont reportés sur la grille de l'étape 1
 
-    @constraint(model, [s in 1:n], sum(x[s, i, j, 3] for k in 1:3, i in 1:l, j in 1:c) >= 1) # Il doit rester au moins un pion sur le plateau à chaque étape ## POURRA ETRE SUPPRIMER !
+
+    ### Contrainets de mouvement ###
+
+    @constraint(model, [s in 1:n, i in 1:l, j in 1:c, p in 1:4], x[s, i, j, p] <= x[s, i, j, 5]) # Si une case est un pion, le mouvement dans la direction p est faisable
+
+    @constraint(model, [s in 1:n, i in 2:l, j in 1:c], x[s, i, j, 1] <= x[s, i-1, j, 5]) # 1 left
+    @constraint(model, [s in 1:n, i in 1:(l-1), j in 1:c], x[s, i, j, 2] <= x[s, i, j, 5]) # 1 right
+    @constraint(model, [s in 1:n, i in 1:l, j in 2:c], x[s, i, j, 3] <= x[s, i, j-1, 5]) # 1 up
+    @constraint(model, [s in 1:n, i in 1:l, j in 1:(c-1)], x[s, i, j, 4] <= x[s, i, j, 5]) # 1 down
+
+    @constraint(model, [s in 1:n, i in 3:l, j in 1:c], x[s, i, j, 1] <= 1 - x[s, i-2, j, 5]) # 2 left
+    @constraint(model, [s in 1:n, i in 1:(l-2), j in 1:c], x[s, i, j, 2] <= 1 - x[s, i+2, j, 5]) # 2 right
+    @constraint(model, [s in 1:n, i in 1:l, j in 3:c], x[s, i, j, 3] <= 1 - x[s, i, j-2, 5]) # 2 up
+    @constraint(model, [s in 1:n, i in 1:l, j in 1:(c-2)], x[s, i, j, 4] <= 1 - x[s, i, j+2, 5]) # 2 down
+
+    @constraint(model, [s in 1:n], sum(x[s, i, j, p] for i in 1:l, j in 1:c, p in 1:4) <= 1) # Un seul mouvement par étape est autorisé, tous pions confondus
+
+    ## Contrainte de mise à jour de la grille entre l'étape s et s+1 ##
+
+    @constraint(model, [s in 1:(n-1), i in 3:(l-2), j in 3:(c-2)], x[s, i, j, 5] - x[s+1, i, j, 5] <= sum(x[s, i, j, p] for p in 1:4) + x[s, i-1, j, 2] - x[s, i-2, j, 2] + x[s, i+1, j, 1] - x[s, i+2, j, 1] + x[s, i, j-1, 4] - x[s, i, j-2, 4] + x[s, i, j+1, 3] - x[s, i, j+2, 3]) # Si un pion se déplace, il n'est plus sur la case (i, j) à l'étape s+1
+
 
     set_silent(model)
     optimize!(model)
 
-    res = fill(-1, l, c, n)
+    res = fill(-1, l - 4, c - 4, n)
 
     if primal_status(model) == MOI.FEASIBLE_POINT
         for s in 1:n
-            for i in 1:l
-                for j in 1:c
-                    if value.(x[s, i, j, 1]) == 1
-                        res[i, j, s] = 1
-                    elseif value.(x[s, i, j, 2]) == 1
-                        res[i, j, s] = 2
-                    elseif value.(x[s, i, j, 3]) == 1
-                        res[i, j, s] = 3
+            for i in 3:(l-2)
+                for j in 3:(c-2)
+                    if G[i-2, j-2] == 1
+                        res[i-2, j-2, s] = 1
+                    elseif value.(x[s, i, j, 5]) == 0
+                        res[i-2, j-2, s] = 2
+                    elseif value.(x[s, i, j, 5]) == 1
+                        res[i-2, j-2, s] = 3
                     end
                 end
             end
@@ -57,10 +107,4 @@ function cplexSolve(G::Matrix{Int})
         return -1
     end
 
-end
-
-
-sol = cplexSolve(readInputFile("instanceTest.txt"))
-if sol != -1
-    displaySolution(sol)
 end
