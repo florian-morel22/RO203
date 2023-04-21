@@ -34,8 +34,66 @@ function cplexSolve(G::Matrix{Int})
     if primal_status(model) == MOI.FEASIBLE_POINT
         return round.(Int, value.(x))
     else
-        println("Aucun solution trouvée.")
         return -1
     end
 end
 
+function solveDataSet(path::String)
+
+    for i in 1:size(readdir(path), 1) # enumerate ne fonctionne pas car ça lit les fichiers dans un ordre aléatoire
+
+        G, filling = readInputFile(joinpath(path, "instance_$i.txt"))
+        out = @timed cplexSolve(G)
+        x = out.value
+
+        l = size(x, 1)
+        c = size(x, 2)
+        text = ""
+
+        if x != -1
+            for i in 1:l
+                for j in 1:c
+                    if x[i, j] == 0
+                        text = string(text, " 0,")
+                    elseif x[i, j] == 1
+                        text = string(text, " 1,")
+                    else
+                        text = string(text, "  ,")
+                    end
+                end
+                text = chop(text, head=0, tail=1)
+                if i != l
+                    text = string(text, "\n")
+                end
+            end
+
+            text = string(text, "\n\n")
+
+            for i in 1:l
+                for j in 1:c
+                    if x[i, j] == 0
+                        text = string(text, " ■")
+                    elseif x[i, j] == 1
+                        text = string(text, " □")
+                    end
+                end
+
+                if i != l
+                    text = string(text, "\n")
+                end
+            end
+        end
+        file = open("res/cplex/cplex_$i.txt", "w")
+        write(file, "taille instance = ", string(l), " x ", string(c), "\n")
+        write(file, "pourcentage de cases initialement remplies = ", string(filling), " %\n")
+        write(file, "solveTime = ", string(out.time), " s\n")
+        if x != -1
+            write(file, "isOptimal = true\n\n")
+        else
+            write(file, "isOptimal = false\n\n")
+        end
+        write(file, text)
+        close(file)
+    end
+    return 1
+end

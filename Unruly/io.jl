@@ -75,8 +75,8 @@ function resultsArray(path_read::String, path_write::String)
     # write(file_w, "Dans ce fichier, on fixe la taille de la grille et on varie le taux de remplissage dans chaque tableau\n\n\n")
     # close(file_w)
 
-    # sizes = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
-    # nb_samples = 10
+    # sizes = [10, 50, 90]
+    # nb_samples = 15
 
     # for size in sizes
 
@@ -114,19 +114,19 @@ function resultsArray(path_read::String, path_write::String)
     write(file_w, "Dans ce fichier, on fixe le taux de remplissage et on fait varier la taille de la grille dans chaque tableau\n\n\n")
     close(file_w)
 
-    #fillings = [10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0]
-    fillings = [30.0]
-    nb_samples = 10
+    fillings = [20.0, 50.0, 70.0]
+    nb_samples = 15
 
     for filling in fillings
+        println("filling : ", filling)
 
-        generateDataSet2(nb_samples, 10, 50, filling)
+        generateDataSet2(nb_samples, 10, 150, filling)
         solveDataSet("data")
 
         file_w = open(joinpath(path_write, "tab2.txt"), "a")
         write(file_w, "-------------------------------------------------------------------------------\n")
         write(file_w, "Taux de remplissage initial : $filling %\n\n")
-        write(file_w, "Taille de la grille   96  ")
+        write(file_w, "Taille de la grille     ")
         write(file_w, "Temps d'execution du cplex     ")
         write(file_w, "Solution trouvée\n")
 
@@ -147,12 +147,11 @@ function resultsArray(path_read::String, path_write::String)
 
     end
 
-
+    println("done")
 end
 
-
-# generateDataSet1(15, 10)
-# #generateDataSet2(15, 10, 100, 10.0)
-# solveDataSet("data");
+# generateDataSet1(5, 10)
+# generateDataSet2(5, 10, 200, 10.0)
+# solveDataSet("data")
 
 resultsArray("res/cplex", "res/tableaux")

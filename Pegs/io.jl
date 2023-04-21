@@ -27,19 +27,19 @@ end
 
 function displaySolution(A::Array{Int64,3})
 
-    l = size(A, 1)
-    c = size(A, 2)
-    n = size(A, 3)
+    n = size(A, 1)
+    l = size(A, 2)
+    c = size(A, 3)
 
     for s in 1:n
         println("Etape ", s, " :")
         for i in 1:l
             for j in 1:c
-                if A[i, j, s] == 1
+                if A[s, i, j] == 1
                     print("  ")
-                elseif A[i, j, s] == 2
+                elseif A[s, i, j] == 2
                     print("□ ")
-                elseif A[i, j, s] == 3
+                elseif A[s, i, j] == 3
                     print("■ ")
                 end
             end
@@ -49,4 +49,8 @@ function displaySolution(A::Array{Int64,3})
     end
 end
 
+
 solveDataSet("data")
+
+# A = heuristicSolve(readInputFile("./data/instance_1.txt"))
+# displaySolution(A)

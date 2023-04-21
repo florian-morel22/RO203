@@ -23,8 +23,6 @@ function generateInstance(l::Int, c::Int, k::Int)
         nb_noirs = k - nb_blancs
     end
 
-
-
     model = Model(CPLEX.Optimizer)
 
     @variable(model, x[1:l, 1:c, 1:3], Bin)
@@ -143,18 +141,16 @@ function generateDataSet1(n::Int, size::Int)
         end
 
         #Selection of cases to remove (between 1% and 99% of the total number of cases)
-        nb_cases_to_remove = convert(Int, floor(instance / n * (l * c - 1)))
-        # nb_cases_to_remove = convert(Int, rand(1:l*c-1)) # use for random number of cases to remove
+        nb_cases_to_remove = convert(Int, floor(instance / n * l * c))
         ind_alea = randperm(l * c)
         ind_cases_to_remove = ind_alea[1:nb_cases_to_remove]
-
 
         text = ""
 
         if x != -1
             for i in 1:l
                 for j in 1:c
-                    if i * j in ind_cases_to_remove
+                    if (i - 1) * c + j in ind_cases_to_remove
                         text = string(text, "  ,")
                     elseif y[i, j] == 0
                         text = string(text, " 0,")
@@ -162,7 +158,7 @@ function generateDataSet1(n::Int, size::Int)
                         text = string(text, " 1,")
                     end
                 end
-                text = chop(text, head=0, tail=1)
+                text = chop(text, head=0, tail=1) # Enlève la virgule de la dernière ligne
                 if i != l
                     text = string(text, "\n")
                 end
@@ -194,11 +190,14 @@ function generateDataSet2(n::Int, size_min::Int, size_max::Int, perc_filling::Fl
             x = generateInstance(l, c, color_fixed)
             if x != -1
                 y = cplexSolve(x)
+                if y == -1
+                    println("Instance générée non résolvable")
+                end
             end
         end
 
-        #Selection of cases to remove (between 1% and 99% of the total number of cases)
-        nb_cases_to_remove = convert(Int, floor((100 - perc_filling) / 100 * (l * c - 1)))
+        #Selection of cases to remove (between 0% and 100% of the total number of cases)
+        nb_cases_to_remove = convert(Int, floor((1 - 0.01 * perc_filling) * l * c))
         ind_alea = randperm(l * c)
         ind_cases_to_remove = ind_alea[1:nb_cases_to_remove]
 
@@ -208,7 +207,7 @@ function generateDataSet2(n::Int, size_min::Int, size_max::Int, perc_filling::Fl
         if x != -1
             for i in 1:l
                 for j in 1:c
-                    if i * j in ind_cases_to_remove
+                    if (i - 1) * c + j in ind_cases_to_remove
                         text = string(text, "  ,")
                     elseif y[i, j] == 0
                         text = string(text, " 0,")
@@ -226,64 +225,4 @@ function generateDataSet2(n::Int, size_min::Int, size_max::Int, perc_filling::Fl
         write(file, text)
         close(file)
     end
-end
-
-function solveDataSet(path::String)
-
-    for i in 1:size(readdir(path), 1) # enumerate ne fonctionne pas car ça lit les fichiers dans un ordre aléatoire
-
-        G, filling = readInputFile(joinpath(path, "instance_$i.txt"))
-        out = @timed cplexSolve(G)
-        x = out.value
-
-        l = size(x, 1)
-        c = size(x, 2)
-        text = ""
-
-        if x != -1
-            for i in 1:l
-                for j in 1:c
-                    if x[i, j] == 0
-                        text = string(text, " 0,")
-                    elseif x[i, j] == 1
-                        text = string(text, " 1,")
-                    else
-                        text = string(text, "  ,")
-                    end
-                end
-                text = chop(text, head=0, tail=1)
-                if i != l
-                    text = string(text, "\n")
-                end
-            end
-
-            text = string(text, "\n\n")
-
-            for i in 1:l
-                for j in 1:c
-                    if x[i, j] == 0
-                        text = string(text, " ■")
-                    elseif x[i, j] == 1
-                        text = string(text, " □")
-                    end
-                end
-
-                if i != l
-                    text = string(text, "\n")
-                end
-            end
-        end
-        file = open("res/cplex/cplex_$i.txt", "w")
-        write(file, "taille instance = ", string(l), " x ", string(c), "\n")
-        write(file, "pourcentage de cases initialement remplies = ", string(filling), " %\n")
-        write(file, "solveTime = ", string(out.time), " s\n")
-        if x != -1
-            write(file, "isOptimal = true\n\n")
-        else
-            write(file, "isOptimal = false\n\n")
-        end
-        write(file, text)
-        close(file)
-    end
-    return 1
 end

@@ -1,163 +1,66 @@
-Dans ce fichier, on fixe la taille de la grille et on varie le taux de remplissage
+Dans ce fichier, on fixe la taille de la grille et on varie le taux de remplissage dans chaque tableau
 
 
 -------------------------------------------------------------------------------
 Taille de la grille : 10 x 10
 
-Taux de remplissage initial     temps d'execution du cplex      solution trouvée                
-                     94.0 %                     0.005236 s                  true
-                     80.0 %                    0.0051401 s                  true
-                     68.0 %                    0.0052777 s                  true
-                     61.0 %                    0.0053417 s                  true
-                     49.0 %                    0.0061103 s                  true
-                     43.0 %                    0.0084437 s                  true
-                     32.0 %                    0.0097137 s                  true
-                     20.0 %                    0.0098626 s                  true
-                     14.0 %                    0.0095274 s                  true
-                      0.0 %                    0.0143746 s                  true
-
-
--------------------------------------------------------------------------------
-Taille de la grille : 20 x 20
-
-Taux de remplissage initial     temps d'execution du cplex      solution trouvée                
-                     92.8 %                    0.0112505 s                  true
-                     82.8 %                    0.0105098 s                  true
-                     62.5 %                    0.0108192 s                  true
-                     64.5 %                    0.0123797 s                  true
-                     53.2 %                    0.0142937 s                  true
-                     39.2 %                    0.0152495 s                  true
-                     25.5 %                    0.0184387 s                  true
-                     21.8 %                    0.0187451 s                  true
-                     14.2 %                    0.0190029 s                  true
-                      0.5 %                    0.0306542 s                  true
-
-
--------------------------------------------------------------------------------
-Taille de la grille : 30 x 30
-
-Taux de remplissage initial     temps d'execution du cplex      solution trouvée                
-                     90.7 %                    0.0202535 s                  true
-                     80.3 %                    0.0217969 s                  true
-                     73.7 %                    0.0206851 s                  true
-                     62.0 %                     0.022982 s                  true
-                     48.3 %                    0.0242176 s                  true
-                     34.9 %                    0.0276655 s                  true
-                     28.0 %                    0.0358346 s                  true
-                     15.0 %                     0.054132 s                  true
-                      8.4 %                    0.0603421 s                  true
-                      0.2 %                     0.053965 s                  true
-
-
--------------------------------------------------------------------------------
-Taille de la grille : 40 x 40
-
-Taux de remplissage initial     temps d'execution du cplex      solution trouvée                
-                     88.5 %                    0.0369979 s                  true
-                     82.1 %                    0.0323854 s                  true
-                     69.9 %                    0.0376892 s                  true
-                     57.1 %                    0.0429767 s                  true
-                     48.1 %                    0.0766644 s                  true
-                     38.6 %                    0.0505861 s                  true
-                     29.2 %                      0.07962 s                  true
-                     20.2 %                    0.0990265 s                  true
-                     10.3 %                    0.1284794 s                  true
-                      0.1 %                    0.0430166 s                  true
+Taux de remplissage initial     Temps d'execution du cplex      Solution trouvée                
+                     94.0 %                     0.006121 s                  true
+                     87.0 %                    0.0050316 s                  true
+                     80.0 %                    0.0063145 s                  true
+                     74.0 %                    0.0057078 s                  true
+                     67.0 %                    0.0061841 s                  true
+                     60.0 %                    0.0071795 s                  true
+                     54.0 %                     0.007985 s                  true
+                     47.0 %                    0.0065429 s                  true
+                     40.0 %                    0.0078642 s                  true
+                     34.0 %                    0.0100296 s                  true
+                     27.0 %                    0.0091295 s                  true
+                     20.0 %                    0.0090217 s                  true
+                     14.0 %                    0.0095588 s                  true
+                      7.0 %                      0.00882 s                  true
+                      0.0 %                    0.0139008 s                  true
 
 
 -------------------------------------------------------------------------------
 Taille de la grille : 50 x 50
 
-Taux de remplissage initial     temps d'execution du cplex      solution trouvée                
-                     87.6 %                    0.0495882 s                  true
-                     80.3 %                    0.0456045 s                  true
-                     71.9 %                    0.0569761 s                  true
-                     60.0 %                    0.0589198 s                  true
-                     48.8 %                    0.0805646 s                  true
-                     40.1 %                    0.0897076 s                  true
-                     35.0 %                    0.1101144 s                  true
-                     16.0 %                    0.1667063 s                  true
-                      9.6 %                    0.1664968 s                  true
-                      0.0 %                    0.0797855 s                  true
-
-
--------------------------------------------------------------------------------
-Taille de la grille : 60 x 60
-
-Taux de remplissage initial     temps d'execution du cplex      solution trouvée                
-                     88.6 %                    0.0742336 s                  true
-                     81.2 %                    0.1000679 s                  true
-                     70.8 %                    0.1037618 s                  true
-                     59.2 %                    0.0963933 s                  true
-                     50.1 %                    0.1485803 s                  true
-                     38.6 %                    0.1556221 s                  true
-                     30.4 %                     0.170957 s                  true
-                     21.6 %                    0.2089491 s                  true
-                     10.0 %                    0.2509188 s                  true
-                      0.0 %                    0.0808479 s                  true
-
-
--------------------------------------------------------------------------------
-Taille de la grille : 70 x 70
-
-Taux de remplissage initial     temps d'execution du cplex      solution trouvée                
-                     90.1 %                     0.128928 s                  true
-                     79.9 %                    0.0999941 s                  true
-                     69.6 %                    0.1320071 s                  true
-                     60.2 %                    0.1473987 s                  true
-                     51.7 %                    0.1760501 s                  true
-                     37.4 %                    0.2220196 s                  true
-                     31.0 %                    0.2694329 s                  true
-                     20.6 %                    0.3488113 s                  true
-                      9.4 %                    0.3416987 s                  true
-                      0.0 %                     0.134705 s                  true
-
-
--------------------------------------------------------------------------------
-Taille de la grille : 80 x 80
-
-Taux de remplissage initial     temps d'execution du cplex      solution trouvée                
-                     89.4 %                     0.150297 s                  true
-                     80.4 %                     0.128751 s                  true
-                     69.4 %                    0.1716059 s                  true
-                     59.9 %                    0.1371038 s                  true
-                     52.3 %                    0.1924475 s                  true
-                     40.1 %                     0.236597 s                  true
-                     30.7 %                    0.3366816 s                  true
-                     18.4 %                    0.4317351 s                  true
-                     10.1 %                    0.5001225 s                  true
-                      0.0 %                     0.472148 s                  true
+Taux de remplissage initial     Temps d'execution du cplex      Solution trouvée                
+                     93.4 %                    0.0480304 s                  true
+                     86.7 %                    0.0395819 s                  true
+                     80.0 %                    0.0495122 s                  true
+                     73.4 %                    0.0455737 s                  true
+                     66.7 %                    0.0485715 s                  true
+                     60.0 %                    0.0493016 s                  true
+                     53.4 %                    0.0574589 s                  true
+                     46.7 %                    0.0741744 s                  true
+                     40.0 %                     0.103253 s                  true
+                     33.4 %                    0.1212918 s                  true
+                     26.7 %                    0.1407606 s                  true
+                     20.0 %                    0.1430593 s                  true
+                     13.4 %                    0.1507434 s                  true
+                      6.7 %                    0.1650029 s                  true
+                      0.0 %                    0.0573748 s                  true
 
 
 -------------------------------------------------------------------------------
 Taille de la grille : 90 x 90
 
-Taux de remplissage initial     temps d'execution du cplex      solution trouvée                
-                     90.4 %                    0.1574501 s                  true
-                     79.5 %                    0.1667676 s                  true
-                     71.0 %                    0.1610904 s                  true
-                     62.0 %                    0.2333209 s                  true
-                     50.1 %                    0.2616665 s                  true
-                     40.5 %                    0.3076852 s                  true
-                     30.2 %                    0.4513616 s                  true
-                     19.6 %                    0.5559782 s                  true
-                     10.1 %                    0.6095478 s                  true
-                      0.0 %                    0.2055725 s                  true
-
-
--------------------------------------------------------------------------------
-Taille de la grille : 100 x 100
-
-Taux de remplissage initial     temps d'execution du cplex      solution trouvée                
-                     88.9 %                    0.2232782 s                  true
-                     81.0 %                    0.2424018 s                  true
-                     70.4 %                    0.2100393 s                  true
-                     60.6 %                    0.2998327 s                  true
-                     50.8 %                    0.6033663 s                  true
-                     41.1 %                    0.3909789 s                  true
-                     31.7 %                    0.5810624 s                  true
-                     18.3 %                    0.7585703 s                  true
-                      9.6 %                    0.8605762 s                  true
-                      0.1 %                    0.8191341 s                  true
+Taux de remplissage initial     Temps d'execution du cplex      Solution trouvée                
+                     93.3 %                    0.1565217 s                  true
+                     86.7 %                    0.1735169 s                  true
+                     80.0 %                    0.1554702 s                  true
+                     73.3 %                    0.1729647 s                  true
+                     66.7 %                    0.1621545 s                  true
+                     60.0 %                    0.1926847 s                  true
+                     53.3 %                    0.3778265 s                  true
+                     46.7 %                    0.2476528 s                  true
+                     40.0 %                     0.305166 s                  true
+                     33.3 %                    0.4171287 s                  true
+                     26.7 %                    0.4519534 s                  true
+                     20.0 %                    0.5122561 s                  true
+                     13.3 %                    0.5433394 s                  true
+                      6.7 %                    0.6239567 s                  true
+                      0.0 %                    0.1880831 s                  true
 
 

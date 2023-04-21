@@ -2,18 +2,65 @@ Dans ce fichier, on fixe le taux de remplissage et on fait varier la taille de l
 
 
 -------------------------------------------------------------------------------
-Taux de remplissage initial : 30.0 %
+Taux de remplissage initial : 20.0 %
 
-Taille de la grille   96  Temps d'execution du cplex     Solution trouvée
-            10 x 10                    0.0091577 s                 true
-            14 x 14                      0.01237 s                 true
-            18 x 18                    0.0195558 s                 true
-            22 x 22                    0.0280539 s                 true
-            26 x 26                    0.0360702 s                 true
-            32 x 32                    0.0635391 s                 true
-            36 x 36                    0.0791882 s                 true
-            40 x 40                    0.0915783 s                 true
-            44 x 44                     0.121514 s                 true
-            50 x 50                    0.1545075 s                 true
+Taille de la grille     Temps d'execution du cplex     Solution trouvée
+            10 x 10                    0.0121306 s                 true
+            20 x 20                    0.0232576 s                 true
+            30 x 30                    0.0834008 s                 true
+            40 x 40                    0.1009714 s                 true
+            50 x 50                    0.1541228 s                 true
+            60 x 60                    0.2360424 s                 true
+            70 x 70                    0.4022755 s                 true
+            80 x 80                    0.4893462 s                 true
+            90 x 90                    0.5331186 s                 true
+          100 x 100                    0.7077167 s                 true
+          110 x 110                    0.9399594 s                 true
+          120 x 120                    1.0794913 s                 true
+          130 x 130                    1.1526094 s                 true
+          140 x 140                    1.3931263 s                 true
+          150 x 150                    1.8776401 s                 true
+
+
+-------------------------------------------------------------------------------
+Taux de remplissage initial : 50.0 %
+
+Taille de la grille     Temps d'execution du cplex     Solution trouvée
+            10 x 10                    0.0112203 s                 true
+            20 x 20                    0.0194777 s                 true
+            30 x 30                    0.0317364 s                 true
+            40 x 40                    0.0741876 s                 true
+            50 x 50                    0.0675283 s                 true
+            60 x 60                    0.2646737 s                 true
+            70 x 70                    0.2370576 s                 true
+            80 x 80                    0.2153038 s                 true
+            90 x 90                    0.5129865 s                 true
+          100 x 100                    0.7544881 s                 true
+          110 x 110                    0.9258431 s                 true
+          120 x 120                    1.3328043 s                 true
+          130 x 130                    1.5115932 s                 true
+          140 x 140                     1.378651 s                 true
+          150 x 150                    2.2607676 s                 true
+
+
+-------------------------------------------------------------------------------
+Taux de remplissage initial : 70.0 %
+
+Taille de la grille     Temps d'execution du cplex     Solution trouvée
+            10 x 10                     0.009358 s                 true
+            20 x 20                    0.0229685 s                 true
+            30 x 30                    0.0401478 s                 true
+            40 x 40                    0.0755292 s                 true
+            50 x 50                    0.0620146 s                 true
+            60 x 60                    0.0855945 s                 true
+            70 x 70                    0.1194838 s                 true
+            80 x 80                    0.1580849 s                 true
+            90 x 90                    0.1993739 s                 true
+          100 x 100                    0.3087218 s                 true
+          110 x 110                    0.3615832 s                 true
+          120 x 120                    0.4089481 s                 true
+          130 x 130                    0.4682103 s                 true
+          140 x 140                    0.7089775 s                 true
+          150 x 150                    0.7087686 s                 true
 
 

@@ -6,9 +6,10 @@ function solveDataSet(path::String)
         out = @timed cplexSolve(G)
         x = out.value
 
-        l = size(x, 1)
-        c = size(x, 2)
-        n = size(x, 3)
+        n = size(x, 1)
+        l = size(x, 2)
+        c = size(x, 3)
+
         text = ""
 
         if x != -1
@@ -16,9 +17,9 @@ function solveDataSet(path::String)
                 text = string(text, "Etape ", string(s), " : \n")
                 for i in 1:l
                     for j in 1:c
-                        if x[i, j, s] == 1
+                        if x[s, i, j] == 1
                             text = string(text, "  ")
-                        elseif x[i, j, s] == 2
+                        elseif x[s, i, j] == 2
                             text = string(text, " □")
                         else
                             text = string(text, " ■")
