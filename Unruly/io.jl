@@ -1,4 +1,3 @@
-using Plots
 include("resolution.jl")
 include("generation.jl")
 
@@ -25,6 +24,7 @@ function readInputFile(path::String)
         end
     end
 
+    # Le taux de remplissage initial de la grille
     filling = round(filled_cases / (l * c) * 100, digits=1)
 
     return x, filling
@@ -54,9 +54,16 @@ function displaySolution(x::Matrix{Int})
     l = size(x, 1)
     c = size(x, 2)
 
+    y = cplexSolve(x)
+
+    if y == -1
+        println("Pas de solution")
+        return
+    end
+
     for i in 1:l
         for j in 1:c
-            if x[i, j] == 1
+            if y[i, j] == 1
                 print("□ ")
             else
                 print("■ ")
@@ -69,46 +76,53 @@ end
 
 function resultsArray(path_read::String, path_write::String)
 
-    #### PHASE 1 : On fixe la taille de la grille et on varie le taux de remplissage
+    """
+        Cette fonction effectue une simulation complète en générant plusieurs datasets et en les résolvant.
+        Elle écrit ensuite les résultats dans les fichiers text : tab1.txt (pour la phase 1) et tab2.txt (pour la phase 2).
 
-    # file_w = open(joinpath(path_write, "tab1.txt"), "w")
-    # write(file_w, "Dans ce fichier, on fixe la taille de la grille et on varie le taux de remplissage dans chaque tableau\n\n\n")
-    # close(file_w)
+        Cette fonction peut mettre beaucoup de temps à s'exécuter.
+    """
 
-    # sizes = [10, 50, 90]
-    # nb_samples = 15
+    #### PHASE 1 : On fixe la taille de la grille et on fait varier le taux de remplissage
 
-    # for size in sizes
+    file_w = open(joinpath(path_write, "tab1.txt"), "w")
+    write(file_w, "Dans ce fichier, on fixe la taille de la grille et on varie le taux de remplissage dans chaque tableau\n\n\n")
+    close(file_w)
 
-    #     generateDataSet1(nb_samples, size)
-    #     solveDataSet("data")
+    sizes = [10, 50, 90]
+    nb_samples = 15
 
-    #     file_w = open(joinpath(path_write, "tab1.txt"), "a")
-    #     write(file_w, "-------------------------------------------------------------------------------\n")
-    #     write(file_w, "Taille de la grille : $size x $size\n\n")
-    #     write(file_w, "Taux de remplissage initial     ")
-    #     write(file_w, "Temps d'execution du cplex      ")
-    #     write(file_w, "Solution trouvée                \n")
+    for size in sizes
 
-    #     for k in 1:nb_samples
+        generateDataSet1(nb_samples, size)
+        solveDataSet("data")
 
-    #         file_r = open(joinpath(path_read, "cplex_$k.txt"))
-    #         lines = readlines(file_r)[1:4]
-    #         close(file_r)
+        file_w = open(joinpath(path_write, "tab1.txt"), "a")
+        write(file_w, "-------------------------------------------------------------------------------\n")
+        write(file_w, "Taille de la grille : $size x $size\n\n")
+        write(file_w, "Taux de remplissage initial     ")
+        write(file_w, "Temps d'execution du cplex      ")
+        write(file_w, "Solution trouvée                \n")
 
-    #         write(file_w, lpad(lines[2][45:end], 27))
-    #         write(file_w, lpad(lines[3][13:end], 31))
-    #         write(file_w, lpad(lines[4][13:end], 22))
-    #         write(file_w, "\n")
-    #     end
+        for k in 1:nb_samples
 
-    #     write(file_w, "\n\n")
-    #     close(file_w)
-    # end
+            file_r = open(joinpath(path_read, "cplex_$k.txt"))
+            lines = readlines(file_r)[1:4]
+            close(file_r)
+
+            write(file_w, lpad(lines[2][45:end], 27))
+            write(file_w, lpad(lines[3][13:end], 31))
+            write(file_w, lpad(lines[4][13:end], 22))
+            write(file_w, "\n")
+        end
+
+        write(file_w, "\n\n")
+        close(file_w)
+    end
 
 
 
-    #### PHASE 2 : On fixe le taux de remplissage et on varie la taille de la grille
+    #### PHASE 2 : On fixe le taux de remplissage et fait on varier la taille de la grille
 
     file_w = open(joinpath(path_write, "tab2.txt"), "w")
     write(file_w, "Dans ce fichier, on fixe le taux de remplissage et on fait varier la taille de la grille dans chaque tableau\n\n\n")
@@ -149,6 +163,8 @@ function resultsArray(path_read::String, path_write::String)
 
     println("done")
 end
+
+
 
 # generateDataSet1(5, 10)
 # generateDataSet2(5, 10, 200, 10.0)

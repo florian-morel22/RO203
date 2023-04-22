@@ -60,7 +60,7 @@ function generateInstance(l::Int, c::Int, k::Int)
         end
         return round.(Int, res)
     else
-        println("Aucun génération trouvée.")
+        println("Aucune génération trouvée.")
         return -1
     end
 end
