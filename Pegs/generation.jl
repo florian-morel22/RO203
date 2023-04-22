@@ -46,13 +46,14 @@ function generateInstance1(l::Int64, c::Int64, p::Float64, type::String)
     return M, index
 end
 
-function generateInstance(l::Int64, c::Int64)
+function generateInstance2(l::Int64, c::Int64, stepsMax::Int64)
     M = fill(1, l, c)
     i0 = rand(1:l)
     j0 = rand(1:c)
     M[i0, j0] = 3
-    listPossibilities = [0]
-    while length(listPossibilities) > 0
+    listPossibilities = []
+    s = 0
+    while s < stepsMax
         listPossibilities = []
         for i in 1:l
             for j in 1:c
@@ -81,8 +82,87 @@ function generateInstance(l::Int64, c::Int64)
             M[i0, j0] = 2
             M[i1, j1] = 3
             M[i2, j2] = 3
+        else
+            break
+        end
+        s = s + 1
+    end
+
+    return M
+end
+
+function generateInstance(l::Int64, c::Int64, stepsMax::Int64)
+    M = fill(1, l, c)
+    # i0 = rand(1:l)
+    # j0 = rand(1:c)
+    i0 = convert(Int, floor(l / 2))
+    j0 = convert(Int, floor(c / 2))
+    M[i0, j0] = 3
+    listPossibilities = []
+    s = 0
+    while s < stepsMax
+        listPossibilities = []
+        for i in 1:l
+            for j in 1:c
+                if M[i, j] == 3
+                    if i > 2 && (M[i-1, j] == 1 || M[i-1, j] == 2) && (M[i-2, j] == 1 || M[i-2, j] == 2)
+                        push!(listPossibilities, [i, j, -1, 0])
+                    elseif i < l - 1 && (M[i+1, j] == 1 || M[i+1, j] == 2) && (M[i+2, j] == 1 || M[i+2, j] == 2)
+                        push!(listPossibilities, [i, j, 1, 0])
+                    elseif j > 2 && (M[i, j-1] == 1 || M[i, j-1] == 2) && (M[i, j-2] == 1 || M[i, j-2] == 2)
+                        push!(listPossibilities, [i, j, 0, -1])
+                    elseif j < c - 1 && (M[i, j+1] == 1 || M[i, j+1] == 2) && (M[i, j+2] == 1 || M[i, j+2] == 2)
+                        push!(listPossibilities, [i, j, 0, 1])
+                    end
+                end
+            end
+        end
+
+        if length(listPossibilities) > 0
+
+            # k = rand(1:length(listPossibilities)) #On choisit un mouv au hasard parmi ceux possibles
+            # move = listPossibilities[k]
+            L = [Inf, Inf, Inf, Inf, Inf, Inf]
+            for move in listPossibilities
+
+                i1, j1 = move[1], move[2]
+                i2, j2 = i1 + move[3], j1 + move[4]
+                i3, j3 = i1 + 2 * move[3], j1 + 2 * move[4]
+
+                #Calcul de la distance euclidienne entre la toute première case ajoutée au jeu et les pions qu'on va faire bouger. On choisit ensuite le pion qui est le plus proche du centre pour éviter d'éparpiller le jeu.
+                if sqrt((i1 - i0)^2 + (j1 - j0)^2) < sqrt((L[1] - i0)^2 + (L[2] - j0)^2)
+                    L = [i1, j1, i2, j2, i3, j3]
+                end
+            end
+
+            M[L[1], L[2]] = 2
+            M[L[3], L[4]] = 3
+            M[L[5], L[6]] = 3
+
+        else
+            break
+        end
+        s = s + 1
+    end
+
+
+    list_i = []
+    list_j = []
+    for i in 1:l
+        for j in 1:c
+            if M[i, j] == 3 || M[i, j] == 2
+                push!(list_i, i)
+                push!(list_j, j)
+            end
         end
     end
+
+    i_min = minimum(list_i)
+    i_max = maximum(list_i)
+    j_min = minimum(list_j)
+    j_max = maximum(list_j)
+
+    M = M[i_min:i_max, j_min:j_max]
 
     return M
 end
@@ -103,9 +183,9 @@ function generateDataSet(n::Int, taille_min::Int, taille_max::Int)
 
     for instance in 1:n
 
-        l = convert(Int, rand(taille_min:taille_max))
-        c = convert(Int, rand(taille_min:taille_max))
-        x = generateInstance(l, c)
+        x = generateInstance(3 * instance, 3 * instance, instance * 3)
+
+        l, c = size(x)
 
         text = ""
 

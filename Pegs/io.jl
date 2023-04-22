@@ -143,5 +143,6 @@ end
 #     displayGrid(G)
 # end
 
-generateDataSet(5, 7, 7)
+generateDataSet(10, 30, 30)
+println("generation done")
 solveDataSet("data")
