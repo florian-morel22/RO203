@@ -1,25 +1,29 @@
-taille instance = 3 x 3
-solveTime = 2.1264408 s
+taille instance = 4 x 3
+solveTime = 2.2836072 s
 nombre d'étpes nécessaires à la resolution = 4
 isOptimal = true
 
 Etape 1 : 
- ■    
- ■ ■ ■
- □    
+     ■
+     □
+ ■ ■ □
+     ■
 
 Etape 2 : 
- □    
- □ ■ ■
- ■    
+     ■
+     □
+ □ □ ■
+     ■
 
 Etape 3 : 
- □    
- ■ □ □
- ■    
+     ■
+     ■
+ □ □ □
+     □
 
 Etape 4 : 
- ■    
- □ □ □
- □    
+     □
+     □
+ □ □ ■
+     □
 

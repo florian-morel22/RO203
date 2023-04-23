@@ -1,75 +1,61 @@
-taille instance = 5 x 5
-solveTime = 0.0621401 s
-nombre d'étpes nécessaires à la resolution = 10
+taille instance = 5 x 3
+solveTime = 0.0473971 s
+nombre d'étpes nécessaires à la resolution = 8
 isOptimal = true
 
 Etape 1 : 
-   ■ ■    
-   ■ ■ ■ ■
- ■ □ □ ■ ■
-     □    
-     ■    
+   ■ ■
+   ■ ■
+ ■ □ □
+ ■ ■ □
+     ■
 
 Etape 2 : 
-   □ ■    
-   □ ■ ■ ■
- ■ ■ □ ■ ■
-     □    
-     ■    
+   ■ □
+   ■ □
+ ■ □ ■
+ ■ ■ □
+     ■
 
 Etape 3 : 
-   □ ■    
-   □ ■ ■ ■
- ■ ■ ■ □ □
-     □    
-     ■    
+   ■ □
+   ■ □
+ ■ □ ■
+ □ □ ■
+     ■
 
 Etape 4 : 
-   □ ■    
-   □ ■ ■ ■
- ■ □ □ ■ □
-     □    
-     ■    
+   ■ □
+   ■ ■
+ ■ □ □
+ □ □ □
+     ■
 
 Etape 5 : 
-   □ □    
-   □ □ ■ ■
- ■ □ ■ ■ □
-     □    
-     ■    
+   □ □
+   □ ■
+ ■ ■ □
+ □ □ □
+     ■
 
 Etape 6 : 
-   □ □    
-   □ ■ □ □
- ■ □ ■ ■ □
-     □    
-     ■    
+   □ □
+   □ ■
+ □ □ ■
+ □ □ □
+     ■
 
 Etape 7 : 
-   □ □    
-   □ □ □ □
- ■ □ □ ■ □
-     ■    
-     ■    
+   □ □
+   □ □
+ □ □ □
+ □ □ ■
+     ■
 
 Etape 8 : 
-   □ □    
-   □ □ □ □
- ■ □ ■ ■ □
-     □    
-     □    
-
-Etape 9 : 
-   □ □    
-   □ □ □ □
- ■ ■ □ □ □
-     □    
-     □    
-
-Etape 10 : 
-   □ □    
-   □ □ □ □
- □ □ ■ □ □
-     □    
-     □    
+   □ □
+   □ □
+ □ □ ■
+ □ □ □
+     □
 

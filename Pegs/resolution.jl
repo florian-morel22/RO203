@@ -74,13 +74,15 @@ function cplexSolve(G::Matrix{Int})
     @constraint(model, [s in 1:(n-1), i in 3:(l-2), j in 3:(c-2)], x[s, i, j, 5] - x[s+1, i, j, 5] == sum(x[s, i, j, p] for p in 1:4) + x[s, i-1, j, 2] - x[s, i-2, j, 2] + x[s, i+1, j, 1] - x[s, i+2, j, 1] + x[s, i, j-1, 4] - x[s, i, j-2, 4] + x[s, i, j+1, 3] - x[s, i, j+2, 3]) # Si un pion se déplace, il n'est plus sur la case (i, j) à l'étape s+1
 
 
-    set_optimizer_attribute(model, "CPXPARAM_TimeLimit", 30)
+    set_optimizer_attribute(model, "CPXPARAM_TimeLimit", 120)
     set_silent(model)
     optimize!(model)
 
 
 
     res = fill(-1, n, l - 4, c - 4)
+
+    number_of_pegs_last_step = 0
 
     if primal_status(model) == MOI.FEASIBLE_POINT
         for s in 1:n
@@ -92,11 +94,14 @@ function cplexSolve(G::Matrix{Int})
                         res[s, i-2, j-2] = 2
                     elseif value.(x[s, i, j, 5]) == 1
                         res[s, i-2, j-2] = 3
+                        if s == n
+                            number_of_pegs_last_step += 1
+                        end
                     end
                 end
             end
         end
-        return round.(Int, res), n
+        return round.(Int, res), n, number_of_pegs_last_step == 1
     else
         println("Aucune solution trouvée.")
         return -1
@@ -106,55 +111,52 @@ end
 
 function solveDataSet(path::String)
 
+
+    for i in (length(readdir(path))+1):(length(readdir("res/cplex")))
+        file = "res/cplex/cplex_$i.txt"
+        rm(file)
+    end
+
     for i in 1:size(readdir(path), 1) # enumerate ne fonctionne pas car ça lit les fichiers dans un ordre aléatoire
 
         G = readInputFile(joinpath(path, "instance_$i.txt"))
         out = @timed cplexSolve(G)
-        x = out.value
+        x = out.value[1]
+        nb_steps = out.value[2]
+        isOptimal = out.value[3]
 
-        l = size(x, 1)
-        c = size(x, 2)
+        n = size(x, 1)
+        l = size(x, 2)
+        c = size(x, 3)
+
         text = ""
 
         if x != -1
-            for i in 1:l
-                for j in 1:c
-                    if x[i, j] == 2
-                        text = string(text, " 0,")
-                    elseif x[i, j] == 3
-                        text = string(text, " 1,")
-                    else
-                        text = string(text, "  ,")
+            for s in 1:n
+                text = string(text, "Etape ", string(s), " : \n")
+                for i in 1:l
+                    for j in 1:c
+                        if x[s, i, j] == 1
+                            text = string(text, "  ")
+                        elseif x[s, i, j] == 2
+                            text = string(text, " □")
+                        else
+                            text = string(text, " ■")
+                        end
+                    end
+                    if i != l
+                        text = string(text, "\n")
                     end
                 end
-                text = chop(text, head=0, tail=1)
-                if i != l
-                    text = string(text, "\n")
-                end
-            end
-
-            text = string(text, "\n\n")
-
-            for i in 1:l
-                for j in 1:c
-                    if x[i, j] == 3
-                        text = string(text, " ■")
-                    elseif x[i, j] == 2
-                        text = string(text, " □")
-                    else
-                        text = string(text, "  ")
-                    end
-                end
-
-                if i != l
-                    text = string(text, "\n")
-                end
+                text = string(text, "\n\n")
             end
         end
+
         file = open("res/cplex/cplex_$i.txt", "w")
         write(file, "taille instance = ", string(l), " x ", string(c), "\n")
         write(file, "solveTime = ", string(out.time), " s\n")
-        if x != -1
+        write(file, "nombre d'étpes nécessaires à la resolution = ", string(nb_steps), "\n")
+        if x != -1 && isOptimal
             write(file, "isOptimal = true\n\n")
         else
             write(file, "isOptimal = false\n\n")
@@ -174,7 +176,7 @@ function heuristicSolve(G::Matrix{Int})
     listSteps = Matrix[]
     push!(listSteps, G)
     listOfPossibilities = []
-    t=0
+    t = 0
 
     while t < 100
         t += 1
@@ -204,7 +206,7 @@ function heuristicSolve(G::Matrix{Int})
         if length(listOfPossibilities) == 0
             break
         else
-            k = Int(ceil(rand()*length(listOfPossibilities)))
+            k = Int(ceil(rand() * length(listOfPossibilities)))
             i_hole = listOfPossibilities[k][1]
             j_hole = listOfPossibilities[k][2]
             action = listOfPossibilities[k][3]
@@ -226,7 +228,7 @@ function heuristicSolve(G::Matrix{Int})
 
             A = copy(G)
 
-            push!(listSteps, A) 
+            push!(listSteps, A)
         end
     end
 

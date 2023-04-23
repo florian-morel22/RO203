@@ -1,6 +1,6 @@
 include("resolution.jl")
 
-#generetaion if an square instance 
+#generetaion if a square/cross instance 
 function generateInstance1(l::Int64, c::Int64, p::Float64, type::String)
     M = fill(1, l, c)
     index = 0
@@ -122,18 +122,26 @@ function generateInstance(l::Int64, c::Int64, stepsMax::Int64)
 
             # k = rand(1:length(listPossibilities)) #On choisit un mouv au hasard parmi ceux possibles
             # move = listPossibilities[k]
-            L = [Inf, Inf, Inf, Inf, Inf, Inf]
+            L = []
             for move in listPossibilities
 
                 i1, j1 = move[1], move[2]
                 i2, j2 = i1 + move[3], j1 + move[4]
                 i3, j3 = i1 + 2 * move[3], j1 + 2 * move[4]
 
-                #Calcul de la distance euclidienne entre la toute première case ajoutée au jeu et les pions qu'on va faire bouger. On choisit ensuite le pion qui est le plus proche du centre pour éviter d'éparpiller le jeu.
-                if sqrt((i1 - i0)^2 + (j1 - j0)^2) < sqrt((L[1] - i0)^2 + (L[2] - j0)^2)
-                    L = [i1, j1, i2, j2, i3, j3]
+                # Calcul de la distance euclidienne entre la toute première case ajoutée au jeu et les pions qu'on va faire bouger. On choisit ensuite le pion qui est le plus proche du centre pour éviter d'éparpiller le jeu.
+                if length(L) == 0
+                    L = [[i1, j1, i2, j2, i3, j3]]
+                elseif sqrt((i1 - i0)^2 + (j1 - j0)^2) < sqrt((L[1][1] - i0)^2 + (L[1][2] - j0)^2)
+                    L = [[i1, j1, i2, j2, i3, j3]]
+                elseif sqrt((i1 - i0)^2 + (j1 - j0)^2) == sqrt((L[1][1] - i0)^2 + (L[1][2] - j0)^2)
+                    push!(L, [i1, j1, i2, j2, i3, j3])
                 end
             end
+
+            # On choisit un pion au hasard parmi ceux les plus proches du centre et sa direction de déploiement
+            k = rand(1:length(L))
+            L = L[k]
 
             M[L[1], L[2]] = 2
             M[L[3], L[4]] = 3
@@ -167,23 +175,16 @@ function generateInstance(l::Int64, c::Int64, stepsMax::Int64)
     return M
 end
 
-function generateDataSet(n::Int, taille_min::Int, taille_max::Int)
-    if n < 1
-        println("Le nombre de grilles à générer doit être supérieur ou égal à 1.")
-        return -1
-    end
-    if taille_min < 2
-        println("La taille minimale doit être supérieure ou égale à 2.")
-        return -1
-    end
-    if taille_min > taille_max
-        println("La taille maximale doit être supérieure à la taille minimale.")
-        return -1
+function generateDataSet(nb_instances::Int, gap::Int)
+
+    for i in 1:length(readdir("data"))
+        file = "data/instance_$i.txt"
+        rm(file)
     end
 
-    for instance in 1:n
+    for instance in 1:nb_instances
 
-        x = generateInstance(3 * instance, 3 * instance, instance * 3)
+        x = generateInstance(10 * gap * instance, 10 * gap * instance, 3 + (instance - 1) * gap)
 
         l, c = size(x)
 

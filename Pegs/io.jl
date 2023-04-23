@@ -75,56 +75,38 @@ function displaySolution(X::Matrix{Int64})
     end
 end
 
-function solveDataSet(path::String)
+function resultsArray(path_read::String, path_write::String, nb_samples::Int64, gap::Int64)
 
-    for i in 1:size(readdir(path), 1) # enumerate ne fonctionne pas car ça lit les fichiers dans un ordre aléatoire
+    generateDataSet(nb_samples, gap)
+    solveDataSet("data")
 
-        G = readInputFile(joinpath(path, "instance_$i.txt"))
-        out = @timed cplexSolve(G)
-        x = out.value[1]
-        nb_steps = out.value[2]
+    file_w = open(joinpath(path_write, "tab.txt"), "w")
+    write(file_w, "Nombre d'étapes nécessaires à la résolution     ")
+    write(file_w, "Temps d'execution du cplex      ")
+    write(file_w, "Solution trouvée                \n")
 
-        n = size(x, 1)
-        l = size(x, 2)
-        c = size(x, 3)
+    for sample in 1:nb_samples
 
-        text = ""
+        file_r = open(joinpath(path_read, "cplex_$sample.txt"))
+        lines = readlines(file_r)[1:4]
+        close(file_r)
 
-        if x != -1
-            for s in 1:n
-                text = string(text, "Etape ", string(s), " : \n")
-                for i in 1:l
-                    for j in 1:c
-                        if x[s, i, j] == 1
-                            text = string(text, "  ")
-                        elseif x[s, i, j] == 2
-                            text = string(text, " □")
-                        else
-                            text = string(text, " ■")
-                        end
-                    end
-                    if i != l
-                        text = string(text, "\n")
-                    end
-                end
-                text = string(text, "\n\n")
-            end
-        end
-
-        file = open("res/cplex/cplex_$i.txt", "w")
-        write(file, "taille instance = ", string(l), " x ", string(c), "\n")
-        write(file, "solveTime = ", string(out.time), " s\n")
-        write(file, "nombre d'étpes nécessaires à la resolution = ", string(nb_steps), "\n")
-        if x != -1
-            write(file, "isOptimal = true\n\n")
-        else
-            write(file, "isOptimal = false\n\n")
-        end
-        write(file, text)
-        close(file)
+        write(file_w, lpad(lines[3][48:end], 43))
+        write(file_w, lpad(lines[2][13:end], 31))
+        write(file_w, lpad(lines[4][13:end], 22))
+        write(file_w, "\n")
     end
-    return 1
+
+    write(file_w, "\n\n")
+    close(file_w)
+
+
+    println("done")
 end
+
+resultsArray("res/cplex", "res/tableau", 17, 2)
+
+
 
 #solveDataSet("data")
 
@@ -143,8 +125,9 @@ end
 #     displayGrid(G)
 # end
 
-"""
-generateDataSet(10, 30, 30)
-println("generation done")
-solveDataSet("data")
-"""
+
+# generateDataSet(10, 30, 30)
+# println("generation done")
+# solveDataSet("data")
+
+
