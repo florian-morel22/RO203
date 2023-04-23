@@ -169,38 +169,45 @@ function heuristicSolve(G::Matrix{Int})
 
     l = size(G, 1)
     c = size(G, 2)
-    listSteps = [G]
+    println("initial Grid")
+    displayGrid(G)
+    listSteps = Matrix[]
+    push!(listSteps, G)
     listOfPossibilities = []
+    t=0
 
-    while true
+    while t < 100
+        t += 1
         listOfPossibilities = []
         #Pour chaque trou, si on a deux pions alignés à côté, on marque la possibilité dans listOfPossibilities
         for i in 1:l
             for j in 1:c
                 if G[i, j] == 2 #trou
                     if i >= 3 && G[i-1, j] == 3 && G[i-2, j] == 3
-                        append!(listOfPossibilities, [i, j, "left"])
+                        push!(listOfPossibilities, [i, j, "left"])
                     end
                     if i <= l - 2 && G[i+1, j] == 3 && G[i+2, j] == 3
-                        append!(listOfPossibilities, [i, j, "right"])
+                        push!(listOfPossibilities, [i, j, "right"])
                     end
                     if j >= 3 && G[i, j-1] == 3 && G[i, j-2] == 3
-                        append!(listOfPossibilities, [i, j, "up"])
+                        push!(listOfPossibilities, [i, j, "up"])
                     end
                     if j <= c - 2 && G[i, j+1] == 3 && G[i, j+2] == 3
-                        append!(listOfPossibilities, [i, j, "down"])
+                        push!(listOfPossibilities, [i, j, "down"])
                     end
                 end
             end
         end
 
+        #println(listOfPossibilities)
+
         if length(listOfPossibilities) == 0
             break
         else
-            k = 1 # choose random
-            i_hole = listOfPossibilities[1]
-            j_hole = listOfPossibilities[2]
-            action = listOfPossibilities[3]
+            k = Int(ceil(rand()*length(listOfPossibilities)))
+            i_hole = listOfPossibilities[k][1]
+            j_hole = listOfPossibilities[k][2]
+            action = listOfPossibilities[k][3]
 
             if action == "left"
                 G[i_hole-2, j_hole] = 2
@@ -217,10 +224,12 @@ function heuristicSolve(G::Matrix{Int})
             end
             G[i_hole, j_hole] = 3
 
-            append!(listSteps, G)
+            A = copy(G)
+
+            push!(listSteps, A) 
         end
     end
 
-    return listSteps
+    return listSteps, t
 
 end

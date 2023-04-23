@@ -10,7 +10,7 @@ function readInputFile(path::String)
     l = size(lines, 1)
     c = ceil(Int, length(lines[1]) / 3)
 
-    x = fill(1, l, c)
+    x = Matrix{Int}(fill(1, l, c))
 
 
     for i in 1:l
@@ -143,6 +143,8 @@ end
 #     displayGrid(G)
 # end
 
+"""
 generateDataSet(10, 30, 30)
 println("generation done")
 solveDataSet("data")
+"""
