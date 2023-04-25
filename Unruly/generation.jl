@@ -35,7 +35,7 @@ function generateInstance(l::Int, c::Int, k::Int)
     # Le bon nombre de cases blanches, noires et vides
     @constraint(model, sum(x[i, j, 2] for i in 1:l, j in 1:c) == nb_blancs)
     @constraint(model, sum(x[i, j, 3] for i in 1:l, j in 1:c) == nb_noirs)
-    @constraint(model, sum(x[i, j, 1] for i in 1:l, j in 1:c) == l * c - k) # peut être pas utile ?
+    @constraint(model, sum(x[i, j, 1] for i in 1:l, j in 1:c) == l * c - k) # n'est pas utile ?
 
     @constraint(model, [i in 1:l, j in 1:(c-2)], sum(x[i, j+k, 2] for k in 0:2) <= 2) # Pas plus de 2 cases noires consécutives sur une colonne
     @constraint(model, [i in 1:l, j in 1:(c-2)], sum(x[i, j+k, 3] for k in 0:2) <= 2) # Pas plus de 2 cases blanches consécutives sur une colonne
