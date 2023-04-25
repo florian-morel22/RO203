@@ -108,7 +108,7 @@ function resultsArray(path_read::String, path_write::String, nb_samples::Int64, 
     println("done")
 end
 
-resultsArray("res/cplex", "res/tableau", 16, 1)
+#resultsArray("res/cplex", "res/tableau", 16, 1)
 
 #solveDataSet("data")
 
