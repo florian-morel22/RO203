@@ -40,7 +40,7 @@ end
 
 function solveDataSet(path::String)
 
-    for i in 1:size(readdir(path), 1) # enumerate ne fonctionne pas car ça lit les fichiers dans un ordre aléatoire
+    for i in 1:size(readdir(path), 1)
 
         G, filling = readInputFile(joinpath(path, "instance_$i.txt"))
         out = @timed cplexSolve(G)

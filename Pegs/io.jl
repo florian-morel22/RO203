@@ -81,6 +81,10 @@ end
 
 function resultsArray(path_read::String, path_write::String, nb_samples::Int64, gap::Int64)
 
+    """
+    Cette fonction réalise une simulation complète sur nb_samples grilles générées par generateDataSet. Deux grilles consécutives sont séparées par gap étapes de résolution.
+    """
+
     generateDataSet(nb_samples, gap)
     solveDataSet("data")
 
@@ -108,28 +112,4 @@ function resultsArray(path_read::String, path_write::String, nb_samples::Int64, 
     println("done")
 end
 
-#resultsArray("res/cplex", "res/tableau", 16, 1)
-
-#solveDataSet("data")
-
-# displayGrid(readInputFile("./data/instance_1.txt"))
-
-#G, index = generateInstance(6, 6, 0.5, "cross")
-# G = [1 1 1 1 3 1 1; 1 1 1 3 3 3 1; 3 1 3 3 2 3 1; 3 3 3 3 3 3 3; 3 3 2 3 3 3 1; 3 3 3 3 3 1 1; 1 1 1 3 1 1 1] # 7x7 OK
-# G = [1 3 3 3 1; 1 3 3 3 1; 3 3 3 3 3; 3 3 2 3 3; 3 3 3 3 3; 1 3 3 3 1; 1 3 3 3 1] # 7x5 OK
-# G, index = generateInstance(7, 5, 0.5, "cross") # OK
-# G = [1 3 3 3 3 1 1; 1 1 3 3 3 3 1; 1 1 1 3 3 3 3; 1 3 3 3 3 3 1; 3 3 3 3 2 3 1; 3 3 3 3 3 3 1; 1 1 3 1 1 1 1] # 7x7 OK, 29 steps
-#G = [1 1 3 3 1 1 1 1 1; 3 3 3 3 1 3 1 1 1; 1 3 3 3 3 2 3 3 1; 1 3 3 2 3 3 3 1 1; 1 3 3 3 3 3 3 3 3; 3 3 3 3 3 3 3 3 1; 1 3 3 2 3 3 1 3 1; 1 1 3 3 1 1 1 3 1; 1 1 3 1 1 1 1 1 1]
-
-# G = generateInstance(20, 20)
-
-# if G != -1
-#     displayGrid(G)
-# end
-
-
-# generateDataSet(10, 30, 30)
-# println("generation done")
-# solveDataSet("data")
-
-
+resultsArray("res/cplex", "res/tableau", 16, 1) # 16 samples, 1 step between each

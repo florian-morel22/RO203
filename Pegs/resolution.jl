@@ -25,14 +25,8 @@ function cplexSolve(G::Matrix{Int})
 
     @objective(model, Min, sum(x[n, i, j, 5] for i in 1:l for j in 1:c)) # On minimise le nombre de cases non hors jeu avec un pion à la fin du jeu
 
-    # @constraint(model, [s in 1:n], l * c - sum(x[s, i, j, 5] for i in 1:l, j in 1:c) >= s)
-    # AJOUTER CONTRAINTE : le nb de trous à l'étape s+1 doit être +1 par rapport à l'étape s
 
-    # @objective(model, Min, 1)
-    # @constraint(model, [s in 1:n], l * c - sum(x[s, i, j, 5] for i in 1:l, j in 1:c) == s) # On ne peut pas avoir plusieurs pions sur une même case
-
-
-    #On fixe les cases en rajoutées en bordure de la grille à 1 pour leur position (ils sonts bloquants) et 0 pour leur mouvement (ne peuvent pas bouger)
+    # On fixe les cases en rajoutées en bordure de la grille à 1 pour leur position (ils sonts bloquants) et 0 pour leur mouvement (ne peuvent pas bouger)
     @constraint(model, [s in 1:n, i in 1:2, j in 1:c, p in 1:4], x[s, i, j, p] == 0)
     @constraint(model, [s in 1:n, i in (l-1):l, j in 1:c, p in 1:4], x[s, i, j, p] == 0)
     @constraint(model, [s in 1:n, i in 1:l, j in 1:2, p in 1:4], x[s, i, j, p] == 0)
@@ -42,9 +36,9 @@ function cplexSolve(G::Matrix{Int})
     @constraint(model, [s in 1:n, i in (l-1):l, j in 1:c], x[s, i, j, 5] == 1)
     @constraint(model, [s in 1:n, i in 1:l, j in 1:2], x[s, i, j, 5] == 1)
     @constraint(model, [s in 1:n, i in 1:l, j in (c-1):c], x[s, i, j, 5] == 1)
+    # End
 
 
-    # On fait pareil pour les cases hors jeu dans G directement
     @constraint(model, [s in 1:n, i in 3:(l-2), j in 3:(c-2), p in 1:4; G[i-2, j-2] == 1], x[s, i, j, p] == 0) # Les cases hors sont des pions immobiles
     @constraint(model, [s in 1:n, i in 3:(l-2), j in 3:(c-2); G[i-2, j-2] == 1], x[s, i, j, 5] == 1) # Les cases hors du jeu sont représentés comme des pions
 
@@ -69,12 +63,12 @@ function cplexSolve(G::Matrix{Int})
 
     @constraint(model, [s in 1:(n-1)], sum(x[s, i, j, p] for i in 1:l, j in 1:c, p in 1:4) <= 1) # Un seul mouvement par étape est autorisé, tous pions confondus # <= 1 si le jeu n'est pas forcément résolvable
 
-    ## Contrainte de mise à jour de la grille entre l'étape s et s+1 ##
+    ### Contrainte de mise à jour de la grille entre l'étape s et s+1 ###
 
     @constraint(model, [s in 1:(n-1), i in 3:(l-2), j in 3:(c-2)], x[s, i, j, 5] - x[s+1, i, j, 5] == sum(x[s, i, j, p] for p in 1:4) + x[s, i-1, j, 2] - x[s, i-2, j, 2] + x[s, i+1, j, 1] - x[s, i+2, j, 1] + x[s, i, j-1, 4] - x[s, i, j-2, 4] + x[s, i, j+1, 3] - x[s, i, j+2, 3]) # Si un pion se déplace, il n'est plus sur la case (i, j) à l'étape s+1
 
 
-    set_optimizer_attribute(model, "CPXPARAM_TimeLimit", 300)
+    set_optimizer_attribute(model, "CPXPARAM_TimeLimit", 300) # 5 minutes de time limit
     set_silent(model)
     optimize!(model)
 
@@ -110,7 +104,6 @@ function cplexSolve(G::Matrix{Int})
 end
 
 function solveDataSet(path::String)
-
 
     for i in (length(readdir(path))+1):(length(readdir("res/cplex")))
         file = "res/cplex/cplex_$i.txt"
@@ -207,7 +200,7 @@ function heuristicSolve(G::Matrix{Int})
             break
         else
             #k =  Int(ceil(rand() * length(listOfPossibilities)))
-            k =  heuristicChoice(G,listOfPossibilities)
+            k = heuristicChoice(G, listOfPossibilities)
 
             G = doMove(G, listOfPossibilities[k])
             A = copy(G)
@@ -219,7 +212,7 @@ function heuristicSolve(G::Matrix{Int})
 
 end
 
-function doMove(G::Matrix{Int}, Possibilitie::Any )
+function doMove(G::Matrix{Int}, Possibilitie::Any)
     i_hole = Possibilitie[1]
     j_hole = Possibilitie[2]
     action = Possibilitie[3]
@@ -245,28 +238,28 @@ end
 function heuristic_function(G::Matrix{Int})
     l = size(G, 1)
     c = size(G, 2)
-    INTER = fill(0, l+2, c+2)
-    INTER[2:l+1, 2:c+1] = replace(G,1=>0,2=>0,3=>1)
+    INTER = fill(0, l + 2, c + 2)
+    INTER[2:l+1, 2:c+1] = replace(G, 1 => 0, 2 => 0, 3 => 1)
     func = fill(0, l, c)
     for i in 2:l+1
         for j in 2:c+1
-            if G[i-1,j-1] > 1 #case valide
-                func[i-1,j-1]=INTER[i+1,j]+INTER[i+1,j+1]+INTER[i,j+1]+INTER[i-1,j]+INTER[i-1,j-1]+INTER[i,j-1]+INTER[i+1,j-1]+INTER[i-1,j+1]
-                if G[i-1,j-1] == 2
-                    func[i-1,j-1] -= 6
+            if G[i-1, j-1] > 1 #case valide
+                func[i-1, j-1] = INTER[i+1, j] + INTER[i+1, j+1] + INTER[i, j+1] + INTER[i-1, j] + INTER[i-1, j-1] + INTER[i, j-1] + INTER[i+1, j-1] + INTER[i-1, j+1]
+                if G[i-1, j-1] == 2
+                    func[i-1, j-1] -= 6
                 end
             end
         end
     end
     return func
-end 
+end
 
-function heuristicChoice(G::Matrix{Int},listOfPossibilities::Any )
+function heuristicChoice(G::Matrix{Int}, listOfPossibilities::Any)
     max = 0
     index = 1
     K = length(listOfPossibilities)
     for i in 1:K
-        INTER = heuristic_function(doMove(G,listOfPossibilities[i]))
+        INTER = heuristic_function(doMove(G, listOfPossibilities[i]))
         if sum(INTER) >= max
             max = sum(INTER)
             index = i
@@ -274,4 +267,4 @@ function heuristicChoice(G::Matrix{Int},listOfPossibilities::Any )
     end
     #println("max = ",max," index = ",index,"listOfPossibilities[index] = ",listOfPossibilities[index])
     return index
-end 
+end

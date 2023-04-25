@@ -165,6 +165,8 @@ function resultsArray(path_read::String, path_write::String)
 end
 
 
+###### MAIN ######
+
 
 # generateDataSet1(5, 10)
 # generateDataSet2(5, 10, 200, 10.0)

@@ -67,6 +67,10 @@ end
 
 function generateDataSet_v1(n::Int, taille_min::Int, taille_max::Int)
 
+    """
+    Cette fonction crée n instances de taille aléatoire entre taille_min et taille_max.
+    """
+
     if n < 1
         println("Le nombre de grilles à générer doit être supérieur ou égal à 1.")
         return -1
@@ -122,6 +126,10 @@ end
 
 function generateDataSet1(n::Int, size::Int)
 
+    """
+    Cette fonction crée n instances de taille size x size.
+    """
+
     if n < 1
         println("Le nombre de grilles à générer doit être supérieur ou égal à 1.")
         return -1
@@ -171,6 +179,10 @@ function generateDataSet1(n::Int, size::Int)
 end
 
 function generateDataSet2(n::Int, size_min::Int, size_max::Int, perc_filling::Float64)
+
+    """
+    Cette fonction crée n instances de tailles comprises entre size_min et size_max toutes remplies à perc_filling %.
+    """
 
     if n < 1
         println("Le nombre de grilles à générer doit être supérieur ou égal à 1.")
