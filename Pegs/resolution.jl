@@ -186,16 +186,16 @@ function heuristicSolve(G::Matrix{Int})
             for j in 1:c
                 if G[i, j] == 2 #trou
                     if i >= 3 && G[i-1, j] == 3 && G[i-2, j] == 3
-                        push!(listOfPossibilities, [i, j, "left"])
-                    end
-                    if i <= l - 2 && G[i+1, j] == 3 && G[i+2, j] == 3
-                        push!(listOfPossibilities, [i, j, "right"])
-                    end
-                    if j >= 3 && G[i, j-1] == 3 && G[i, j-2] == 3
                         push!(listOfPossibilities, [i, j, "up"])
                     end
-                    if j <= c - 2 && G[i, j+1] == 3 && G[i, j+2] == 3
+                    if i <= l - 2 && G[i+1, j] == 3 && G[i+2, j] == 3
                         push!(listOfPossibilities, [i, j, "down"])
+                    end
+                    if j >= 3 && G[i, j-1] == 3 && G[i, j-2] == 3
+                        push!(listOfPossibilities, [i, j, "left"])
+                    end
+                    if j <= c - 2 && G[i, j+1] == 3 && G[i, j+2] == 3
+                        push!(listOfPossibilities, [i, j, "right"])
                     end
                 end
             end
@@ -206,28 +206,11 @@ function heuristicSolve(G::Matrix{Int})
         if length(listOfPossibilities) == 0
             break
         else
-            k = Int(ceil(rand() * length(listOfPossibilities)))
-            i_hole = listOfPossibilities[k][1]
-            j_hole = listOfPossibilities[k][2]
-            action = listOfPossibilities[k][3]
+            #k =  Int(ceil(rand() * length(listOfPossibilities)))
+            k =  heuristicChoice(G,listOfPossibilities)
 
-            if action == "left"
-                G[i_hole-2, j_hole] = 2
-                G[i_hole-1, j_hole] = 2
-            elseif action == "right"
-                G[i_hole+2, j_hole] = 2
-                G[i_hole+1, j_hole] = 2
-            elseif action == "up"
-                G[i_hole, j_hole-2] = 2
-                G[i_hole, j_hole-1] = 2
-            elseif action == "down"
-                G[i_hole, j_hole+2] = 2
-                G[i_hole, j_hole+1] = 2
-            end
-            G[i_hole, j_hole] = 3
-
+            G = doMove(G, listOfPossibilities[k])
             A = copy(G)
-
             push!(listSteps, A)
         end
     end
@@ -235,3 +218,60 @@ function heuristicSolve(G::Matrix{Int})
     return listSteps, t
 
 end
+
+function doMove(G::Matrix{Int}, Possibilitie::Any )
+    i_hole = Possibilitie[1]
+    j_hole = Possibilitie[2]
+    action = Possibilitie[3]
+    A = copy(G)
+
+    if action == "up"
+        A[i_hole-2, j_hole] = 2
+        A[i_hole-1, j_hole] = 2
+    elseif action == "down"
+        A[i_hole+2, j_hole] = 2
+        A[i_hole+1, j_hole] = 2
+    elseif action == "left"
+        A[i_hole, j_hole-2] = 2
+        A[i_hole, j_hole-1] = 2
+    elseif action == "right"
+        A[i_hole, j_hole+2] = 2
+        A[i_hole, j_hole+1] = 2
+    end
+    A[i_hole, j_hole] = 3
+    return A
+end
+
+function heuristic_function(G::Matrix{Int})
+    l = size(G, 1)
+    c = size(G, 2)
+    INTER = fill(0, l+2, c+2)
+    INTER[2:l+1, 2:c+1] = replace(G,1=>0,2=>0,3=>1)
+    func = fill(0, l, c)
+    for i in 2:l+1
+        for j in 2:c+1
+            if G[i-1,j-1] > 1 #case valide
+                func[i-1,j-1]=INTER[i+1,j]+INTER[i+1,j+1]+INTER[i,j+1]+INTER[i-1,j]+INTER[i-1,j-1]+INTER[i,j-1]+INTER[i+1,j-1]+INTER[i-1,j+1]
+                if G[i-1,j-1] == 2
+                    func[i-1,j-1] -= 6
+                end
+            end
+        end
+    end
+    return func
+end 
+
+function heuristicChoice(G::Matrix{Int},listOfPossibilities::Any )
+    max = 0
+    index = 1
+    K = length(listOfPossibilities)
+    for i in 1:K
+        INTER = heuristic_function(doMove(G,listOfPossibilities[i]))
+        if sum(INTER) >= max
+            max = sum(INTER)
+            index = i
+        end
+    end
+    #println("max = ",max," index = ",index,"listOfPossibilities[index] = ",listOfPossibilities[index])
+    return index
+end 
