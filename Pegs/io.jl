@@ -46,7 +46,9 @@ end
 
 function displaySolution(X::Matrix{Int64})
 
-    Y = cplexSolve(X)
+    out = @timed cplexSolve(X)[1]
+    Y = out.value
+    Ytime = out.time
 
     if Y == -1
         println("No solution found")
@@ -73,6 +75,8 @@ function displaySolution(X::Matrix{Int64})
         end
         println()
     end
+
+    println("Time : ", Ytime, " s")
 end
 
 function resultsArray(path_read::String, path_write::String, nb_samples::Int64, gap::Int64)
@@ -104,9 +108,7 @@ function resultsArray(path_read::String, path_write::String, nb_samples::Int64, 
     println("done")
 end
 
-resultsArray("res/cplex", "res/tableau", 17, 2)
-
-
+resultsArray("res/cplex", "res/tableau", 16, 1)
 
 #solveDataSet("data")
 

@@ -1,20 +1,21 @@
 Nombre d'étapes nécessaires à la résolution     Temps d'execution du cplex      Solution trouvée                
-                                          4                    2.2836072 s                  true
-                                          6                    0.0299297 s                  true
-                                          8                    0.0473971 s                  true
-                                         10                    0.0544732 s                  true
-                                         12                    0.0955657 s                  true
-                                         14                    0.3623288 s                  true
-                                         16                    0.3673178 s                  true
-                                         18                    0.7670582 s                  true
-                                         20                    0.8432109 s                  true
-                                         22                   17.8304078 s                  true
-                                         24                  120.2909074 s                 false
-                                         26                   10.6476206 s                  true
-                                         28                   87.3983698 s                  true
-                                         30                   69.6896387 s                  true
-                                         32                   18.8930551 s                  true
-                                         34                   120.516163 s                 false
-                                         36                  120.5480892 s                 false
+                                          4                    2.2421504 s                  true
+                                          6                     0.025807 s                  true
+                                          8                    0.0472392 s                  true
+                                         10                    0.0574233 s                  true
+                                         12                    0.1075297 s                  true
+                                         14                    0.1788545 s                  true
+                                         16                    0.2737633 s                  true
+                                         18                       7.3536 s                  true
+                                         20                    1.7727977 s                  true
+                                         22                   39.9763018 s                  true
+                                         24                    29.460803 s                  true
+                                         26                   40.3207813 s                  true
+                                         28                   10.7318111 s                  true
+                                         30                   60.5980584 s                  true
+                                         32                   68.2548159 s                  true
+                                         34                  300.5701454 s                 false
+                                         36                  300.5794966 s                 false
+                                         38                  300.5794791 s                 false
 
 

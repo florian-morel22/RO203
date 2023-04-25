@@ -1,5 +1,5 @@
 taille instance = 4 x 3
-solveTime = 2.2836072 s
+solveTime = 2.2421504 s
 nombre d'étpes nécessaires à la resolution = 4
 isOptimal = true
 

@@ -1,5 +1,5 @@
 taille instance = 5 x 5
-solveTime = 0.0544732 s
+solveTime = 0.0574233 s
 nombre d'étpes nécessaires à la resolution = 10
 isOptimal = true
 

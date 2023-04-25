@@ -74,7 +74,7 @@ function cplexSolve(G::Matrix{Int})
     @constraint(model, [s in 1:(n-1), i in 3:(l-2), j in 3:(c-2)], x[s, i, j, 5] - x[s+1, i, j, 5] == sum(x[s, i, j, p] for p in 1:4) + x[s, i-1, j, 2] - x[s, i-2, j, 2] + x[s, i+1, j, 1] - x[s, i+2, j, 1] + x[s, i, j-1, 4] - x[s, i, j-2, 4] + x[s, i, j+1, 3] - x[s, i, j+2, 3]) # Si un pion se déplace, il n'est plus sur la case (i, j) à l'étape s+1
 
 
-    set_optimizer_attribute(model, "CPXPARAM_TimeLimit", 120)
+    set_optimizer_attribute(model, "CPXPARAM_TimeLimit", 300)
     set_silent(model)
     optimize!(model)
 
